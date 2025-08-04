@@ -39,6 +39,7 @@
     "app/**/not-found.tsx",
     "app/**/layout.tsx",
     "app/**/route.ts",
+    "app/**/NewEquityGrant.tsx",
     "trpc/**/*.ts",
     ".next/types/**/*.ts",
     "types.d.ts",

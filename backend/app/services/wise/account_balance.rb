@@ -16,6 +16,7 @@ class Wise::AccountBalance
 
   def self.create_usd_balance_if_needed
     api_response = Wise::PayoutApi.new.get_balances
+    puts "Wise API response: #{api_response.inspect}"
     return if api_response.find { |balance| balance["currency"] == "USD" }.present?
 
     Wise::PayoutApi.new.create_usd_balance

@@ -1,9 +1,9 @@
 "use client";
 
-import { EnvelopeIcon, UsersIcon } from "@heroicons/react/24/outline";
+import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { FileScan } from "lucide-react";
+import { FileScan, UsersIcon } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { useCurrentCompany } from "@/global";
 import type { RouterOutput } from "@/trpc";
 import { trpc } from "@/trpc/client";
+import { cn } from "@/utils";
 import { pluralize } from "@/utils/pluralize";
 
 const formSchema = z.object({
@@ -28,7 +29,7 @@ const formSchema = z.object({
 });
 
 type CompanyUpdate = RouterOutput["companyUpdates"]["get"];
-const Edit = ({ update }: { update?: CompanyUpdate }) => {
+const Edit = ({ update, isModal }: { update?: CompanyUpdate; isModal?: boolean }) => {
   const { id } = useParams<{ id?: string }>();
   const pathname = usePathname();
   const company = useCurrentCompany();
@@ -76,6 +77,9 @@ const Edit = ({ update }: { update?: CompanyUpdate }) => {
           await trpcUtils.companyUpdates.get.invalidate({ companyId: company.id, id });
           setViewPreview(true);
         }
+      } else if (isModal) {
+        setModalOpen(false);
+        router.back();
       } else {
         router.push(`/updates/company`);
       }
@@ -94,36 +98,42 @@ const Edit = ({ update }: { update?: CompanyUpdate }) => {
     <>
       <Form {...form}>
         <form onSubmit={(e) => void submit(e)}>
-          <DashboardHeader
-            title={id ? "Edit company update" : "New company update"}
-            headerActions={
-              update?.sentAt ? (
-                <Button type="submit">
-                  <EnvelopeIcon className="size-4" />
-                  Update
-                </Button>
-              ) : (
-                <>
-                  <MutationStatusButton
-                    type="button"
-                    mutation={saveMutation}
-                    idleVariant="outline"
-                    loadingText="Saving..."
-                    onClick={() =>
-                      void form.handleSubmit((values) => saveMutation.mutateAsync({ values, preview: true }))()
-                    }
-                  >
-                    <FileScan className="size-4" />
-                    Preview
-                  </MutationStatusButton>
+          <div
+            className={cn(`hidden`, {
+              block: !isModal,
+            })}
+          >
+            <DashboardHeader
+              title={id ? "Edit company update" : "New company update"}
+              headerActions={
+                update?.sentAt ? (
                   <Button type="submit">
                     <EnvelopeIcon className="size-4" />
-                    Publish
+                    Update
                   </Button>
-                </>
-              )
-            }
-          />
+                ) : (
+                  <>
+                    <MutationStatusButton
+                      type="button"
+                      mutation={saveMutation}
+                      idleVariant="outline"
+                      loadingText="Saving..."
+                      onClick={() =>
+                        void form.handleSubmit((values) => saveMutation.mutateAsync({ values, preview: true }))()
+                      }
+                    >
+                      <FileScan className="size-4" />
+                      Preview
+                    </MutationStatusButton>
+                    <Button type="submit">
+                      <EnvelopeIcon className="size-4" />
+                      Publish
+                    </Button>
+                  </>
+                )
+              }
+            />
+          </div>
           <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_auto]">
             <div className="grid gap-3">
               <FormField
@@ -146,7 +156,7 @@ const Edit = ({ update }: { update?: CompanyUpdate }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Update</FormLabel>
-                    <FormControl>
+                    <FormControl className="min-h-60">
                       <RichTextEditor {...field} />
                     </FormControl>
                     <FormMessage />
@@ -186,6 +196,37 @@ const Edit = ({ update }: { update?: CompanyUpdate }) => {
                 </div>
               ) : null}
             </div>
+          </div>
+          <div
+            className={cn("mt-6 flex gap-3", {
+              hidden: !isModal,
+            })}
+          >
+            {update?.sentAt ? (
+              <Button type="submit">
+                <EnvelopeIcon className="size-4" />
+                Update
+              </Button>
+            ) : (
+              <>
+                <MutationStatusButton
+                  type="button"
+                  mutation={saveMutation}
+                  idleVariant="outline"
+                  loadingText="Saving..."
+                  onClick={() =>
+                    void form.handleSubmit((values) => saveMutation.mutateAsync({ values, preview: true }))()
+                  }
+                >
+                  <FileScan className="size-4" />
+                  Preview
+                </MutationStatusButton>
+                <Button type="submit">
+                  <EnvelopeIcon className="size-4" />
+                  Publish
+                </Button>
+              </>
+            )}
           </div>
           <Dialog open={modalOpen} onOpenChange={setModalOpen}>
             <DialogContent>

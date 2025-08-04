@@ -5,6 +5,31 @@ import { users } from "@/db/schema";
 // Backend accepts "000000" when Rails.env.test? && ENV['ENABLE_DEFAULT_OTP'] == 'true'
 const TEST_OTP_CODE = "000000";
 
+/* const clerkTestUsers = [
+  { id: "user_30kCEA4uGV9mmzAk2lEr4ZPiUcC", email: "hi1+clerk_test@example.com" },
+  { id: "user_30kCGcstBCBBBr6NXLRN9Ps2Wrc", email: "hi2+clerk_test@example.com" },
+  { id: "user_30kCIFN1sqIV4Pbk5boCUjfnRLp", email: "hi3+clerk_test@example.com" },
+  { id: "user_30kCJn8GMANXVOmqyPxS9i7Vkzo", email: "hi4+clerk_test@example.com" },
+]; */
+// let clerkTestUser: (typeof clerkTestUsers)[number] | undefined;
+
+/* export const clearClerkUser = async () => {
+  if (clerkTestUser) await db.update(users).set({ clerkId: null }).where(eq(users.clerkId, clerkTestUser.id));
+  clerkTestUser = undefined;
+}; */
+
+/* export const setClerkUser = async (id: bigint) => {
+  await clearClerkUser();
+  for (const user of clerkTestUsers) {
+    try {
+      await db.update(users).set({ clerkId: user.id }).where(eq(users.id, id));
+      clerkTestUser = user;
+      break;
+    } catch {}
+  }
+  return assertDefined(clerkTestUser);
+}; */
+
 export const login = async (page: Page, user: typeof users.$inferSelect) => {
   await page.goto("/login");
 

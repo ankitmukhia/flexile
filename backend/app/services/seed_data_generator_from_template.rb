@@ -127,14 +127,14 @@ class SeedDataGeneratorFromTemplate
 
         company = user.company_administrators.first.company
         company.update!(model_attributes)
-        logo_path = Rails.root.join("config", "data", "seed_templates", template, "logo.png")
-        if File.exist?(logo_path)
-          logo_content = File.binread(logo_path)
-          filename = File.basename(logo_path)
-          company.logo.attach(io: StringIO.new(logo_content), filename: filename)
-          company.full_logo.attach(io: StringIO.new(logo_content), filename: filename)
-          company.save!
-        end
+        # logo_path = Rails.root.join("config", "data", "seed_templates", template, "logo.png")
+        # if File.exist?(logo_path)
+        #   logo_content = File.binread(logo_path)
+        #   filename = File.basename(logo_path)
+        #   company.logo.attach(io: StringIO.new(logo_content), filename: filename)
+        #   company.full_logo.attach(io: StringIO.new(logo_content), filename: filename)
+        #   company.save!
+        # end
 
         if company_data.key?("share_classes")
           company_data.fetch("share_classes").each do |share_class_data|
